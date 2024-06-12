@@ -5,8 +5,8 @@
     "scripts": {
         "dev": "node build/server.js",
         "formate:check": "npx prettier . --check",
-        "formate:write": "npx prettier . --write",
-        "lint": "npx eslint .",
+        "formate:fix": "npx prettier . --write",
+        "lint:fix": "npx eslint .",
         "prepare": "husky"
     },
     "type": "module",
@@ -20,7 +20,14 @@
         "eslint": "^8.57.0",
         "eslint-config-prettier": "^9.1.0",
         "husky": "^9.0.11",
+        "lint-staged": "^15.2.6",
         "prettier": "3.3.2",
         "typescript": "^5.4.5"
+    },
+    "lint-staged": {
+        "*": [
+            "npm run lint:fix",
+            "npm run formate:fix"
+        ]
     }
 }
