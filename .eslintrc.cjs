@@ -14,6 +14,6 @@ module.exports = {
     },
     root: true,
     rules: {
-        "dot-notation": "error"
-    }
+        "dot-notation": "error",
+    },
 };
