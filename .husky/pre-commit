@@ -1,3 +1,2 @@
-npm run formate:check
 npm run formate:write
 npm run lint
