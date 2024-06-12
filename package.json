@@ -3,9 +3,24 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "node build/server.js",
+    "formate:check": "npx prettier . --check",
+    "formate:write": "npx prettier . --write",
+    "lint": "npx eslint .",
+    "prepare": "husky"
   },
+  "type": "module",
   "author": "Sandeep Rajak",
   "license": "ISC",
-  "description": ""
+  "description": "",
+  "devDependencies": {
+    "@types/node": "^20.14.2",
+    "@typescript-eslint/eslint-plugin": "^7.13.0",
+    "@typescript-eslint/parser": "^7.13.0",
+    "eslint": "^8.57.0",
+    "eslint-config-prettier": "^9.1.0",
+    "husky": "^9.0.11",
+    "prettier": "3.3.2",
+    "typescript": "^5.4.5"
+  }
 }
