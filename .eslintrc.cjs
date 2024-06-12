@@ -13,4 +13,7 @@ module.exports = {
         tsconfigRootDir: __dirname,
     },
     root: true,
+    rules: {
+        "dot-notation": "error"
+    }
 };

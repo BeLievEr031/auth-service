@@ -6,7 +6,8 @@
         "dev": "node build/server.js",
         "formate:check": "npx prettier . --check",
         "formate:fix": "npx prettier . --write",
-        "lint:fix": "npx eslint .",
+        "lint": "npx eslint .",
+        "lint:fix": "npx eslint . --fix",
         "prepare": "husky"
     },
     "type": "module",
