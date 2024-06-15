@@ -1,10 +1,14 @@
-function display(username: string): void {
-    console.log(username);
-    const p = {
-        age: 19,
-    };
+import app from "./app";
+import Config from "./config";
 
-    console.log(p.age);
-}
+const startServer = () => {
+    try {
+        const PORT = Config.PORT;
+        app.listen(PORT, () => console.log(`Listening on PORT ${PORT}`));
+    } catch (error) {
+        console.log(error);
+        process.exit(1);
+    }
+};
 
-display("username");
+startServer();
