@@ -16,4 +16,11 @@ describe("POST /auth/register", () => {
         // ASSERT
         expect(response.statusCode).toBe(201);
     });
+
+    it("should return valid json", async () => {
+        const response = await request(app).post("/auth/register");
+        expect(
+            (response.headers as Record<string, string>)["content-type"]
+        ).toEqual(expect.stringContaining("json"));
+    });
 });
