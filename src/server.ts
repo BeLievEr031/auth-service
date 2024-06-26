@@ -6,7 +6,7 @@ const startServer = () => {
     try {
         const PORT = Config.PORT;
         app.listen(PORT, () => {
-            logger.info(`Server started on port ${PORT}`, {
+            logger.info(`Server started o sjbjk n sdsf PORT 🔥🔥 ${PORT}`, {
                 path: process.cwd(),
             });
         });
