@@ -3,6 +3,7 @@ import express, { Response, Request } from "express";
 import authRouter from "./routes/auth";
 // import logger from "./config/logger";
 const app = express();
+app.use(express.json({ limit: "15KB" }));
 
 app.get("/", (req: Request, res: Response) => {
     res.json({ msg: "hi from jbj me" });
