@@ -3,7 +3,7 @@
     "version": "1.0.0",
     "main": "index.js",
     "scripts": {
-        "dev": "cross-env NODE_ENV=test nodemon src/server.ts",
+        "dev": "cross-env NODE_ENV=dev nodemon src/server.ts",
         "formate:check": "npx prettier . --check",
         "formate:fix": "npx prettier . --write",
         "lint": "npx eslint .",
@@ -43,8 +43,10 @@
         ]
     },
     "dependencies": {
+        "@types/http-errors": "^2.0.4",
         "dotenv": "^16.4.5",
         "express": "^4.19.2",
+        "http-errors": "^2.0.0",
         "pg": "^8.4.0",
         "reflect-metadata": "^0.1.13",
         "typeorm": "0.3.20",
