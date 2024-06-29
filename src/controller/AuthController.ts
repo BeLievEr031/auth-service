@@ -2,6 +2,8 @@ import { NextFunction, Response } from "express";
 import { RegisterUserRequest } from "../types";
 import { UserService } from "../services/UserService";
 import { Logger } from "winston";
+import { Role } from "../constant";
+import bcrypt from "bcrypt";
 
 export class AuthController {
     // Dependency injection
@@ -16,11 +18,14 @@ export class AuthController {
     ) {
         try {
             const { firstName, lastName, email, password } = req.body;
+            const saltRound = 10;
+            const hashedPassword = await bcrypt.hash(password, saltRound);
             const user = await this.userService.create({
                 firstName,
                 lastName,
                 email,
-                password,
+                password: hashedPassword,
+                role: Role.CUSTOMER,
             });
             this.logger.info("User registered successfully", { id: user.id });
             res.status(201).json({ user });
