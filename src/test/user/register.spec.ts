@@ -88,4 +88,26 @@ describe("POST /auth/register", () => {
             /^\$2[aby]?\$\d{2}\$[./A-Za-z0-9]{53}$/
         );
     });
+
+    it("should return 400. if email exist.", async () => {
+        // Arrange
+        const userData = {
+            firstName: "John",
+            lastName: "Doe",
+            email: "john@example.com",
+            password: "12356",
+            role: "customer",
+        };
+
+        const userRepository = AppDataSource.getRepository(User);
+        await userRepository.save(userData);
+
+        // Act
+        const response = await request(app)
+            .post("/auth/register")
+            .send(userData);
+        const users = await userRepository.find();
+        expect(response.statusCode).toBe(400);
+        expect(users).toHaveLength(1);
+    });
 });
