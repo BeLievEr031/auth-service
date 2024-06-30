@@ -4,6 +4,7 @@ import { UserService } from "../services/UserService";
 import { Logger } from "winston";
 import { Role } from "../constant";
 import bcrypt from "bcrypt";
+import { validationResult } from "express-validator";
 
 export class AuthController {
     // Dependency injection
@@ -17,6 +18,11 @@ export class AuthController {
         next: NextFunction
     ) {
         try {
+            const errors = validationResult(req);
+            if (!errors.isEmpty()) {
+                return res.status(400).json({ errors: errors.array() });
+            }
+
             const { firstName, lastName, email, password } = req.body;
             const saltRound = 10;
             const hashedPassword = await bcrypt.hash(password, saltRound);
