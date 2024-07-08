@@ -4,6 +4,8 @@ import { DataSource } from "typeorm";
 import { AppDataSource } from "../../config/data-source";
 import { User } from "../../entity/User";
 import { Role } from "../../constant";
+import { isJwt } from "../utils";
+import { RefreshToken } from "../../entity/RefreshToken";
 
 describe("POST /auth/register", () => {
     let connection: DataSource;
@@ -110,6 +112,76 @@ describe("POST /auth/register", () => {
             const users = await userRepository.find();
             expect(response.statusCode).toBe(400);
             expect(users).toHaveLength(1);
+        });
+
+        it("should return a access and refresh token.", async () => {
+            const userData = {
+                firstName: "John",
+                lastName: "Doe",
+                email: "john@example.com",
+                password: "12356",
+                role: "customer",
+            };
+
+            interface Headers {
+                "set-cookie"?: string[];
+            }
+
+            let accessToken = null;
+            let refreshToken = null;
+
+            // Act
+            const response = await request(app)
+                .post("/auth/register")
+                .send(userData);
+
+            const cookies = (response.headers as Headers)["set-cookie"] || [];
+
+            cookies.forEach((cookie) => {
+                if (cookie.startsWith("accessToken=")) {
+                    accessToken = cookie.split(";")[0].split("=")[1];
+                }
+                if (cookie.startsWith("refreshToken=")) {
+                    refreshToken = cookie.split(";")[0].split("=")[1];
+                }
+            });
+
+            expect(accessToken).not.toBeNull();
+            expect(refreshToken).not.toBeNull();
+
+            expect(isJwt(accessToken)).toBeTruthy();
+            expect(isJwt(refreshToken)).toBeTruthy();
+        });
+
+        it("should persist th refreshtoken", async () => {
+            // ARRANGE
+            const userData = {
+                firstName: "John",
+                lastName: "Doe",
+                email: "john@example.com",
+                password: "12356",
+                role: "customer",
+            };
+
+            // ACT
+            const response = await request(app)
+                .post("/auth/register")
+                .send(userData);
+
+            const repository = connection.getRepository(RefreshToken);
+            const refresh = await repository.find();
+
+            // ASSERT
+            expect(refresh).toHaveLength(1);
+            const tokens = await repository
+                .createQueryBuilder("refreshToken")
+                .where("refreshToken.userId = :userId", {
+                    userId: (response.body.user as Record<string, string>).id,
+                })
+                .getMany();
+            // console.log("🔥🔥🔥🔥", tokens);
+
+            expect(tokens).toHaveLength(1);
         });
     });
 

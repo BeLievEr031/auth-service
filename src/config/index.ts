@@ -11,6 +11,7 @@ const {
     DB_PASSWORD,
     DB_DATABASE,
     NODE_ENV,
+    REFRESH_TOKEN_SECRET,
 } = process.env;
 
 const Config = {
@@ -22,6 +23,7 @@ const Config = {
     DB_PASSWORD,
     DB_DATABASE,
     NODE_ENV,
-};
+    REFRESH_TOKEN_SECRET,
+} as const;
 
 export default Config;
