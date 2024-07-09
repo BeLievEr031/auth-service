@@ -10,7 +10,7 @@ export class UserService {
         });
 
         if (userData) {
-            const err = createHttpError(400, "email already exist.");
+            const err = createHttpError(409, "email already exist.");
             throw err;
         }
 

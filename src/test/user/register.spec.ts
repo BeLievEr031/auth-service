@@ -92,12 +92,12 @@ describe("POST /auth/register", () => {
             );
         });
 
-        it("should return 400. if email exist.", async () => {
+        it("should return 409. if email exist.", async () => {
             // Arrange
             const userData = {
                 firstName: "John",
                 lastName: "Doe",
-                email: "john@example.com",
+                email: "john@gmail.com",
                 password: "12356",
                 role: "customer",
             };
@@ -110,7 +110,7 @@ describe("POST /auth/register", () => {
                 .post("/auth/register")
                 .send(userData);
             const users = await userRepository.find();
-            expect(response.statusCode).toBe(400);
+            expect(response.statusCode).toBe(409);
             expect(users).toHaveLength(1);
         });
 
@@ -153,7 +153,7 @@ describe("POST /auth/register", () => {
             expect(isJwt(refreshToken)).toBeTruthy();
         });
 
-        it("should persist th refreshtoken", async () => {
+        it("should persist the refreshtoken", async () => {
             // ARRANGE
             const userData = {
                 firstName: "John",
@@ -194,6 +194,116 @@ describe("POST /auth/register", () => {
                 email: "",
                 password: "12356",
                 role: "customer",
+            };
+
+            // Act
+            const response = await request(app)
+                .post("/auth/register")
+                .send(userData);
+
+            const userRepository = AppDataSource.getRepository(User);
+            const users = await userRepository.find();
+
+            expect(response.statusCode).toBe(400);
+            expect(users).toHaveLength(0);
+        });
+
+        it("should return 400. if firstname not given", async () => {
+            // Arrange
+            const userData = {
+                firstName: "",
+                lastName: "Doe",
+                email: "sandy@gmail.com",
+                password: "12356",
+                role: "customer",
+            };
+
+            // Act
+            const response = await request(app)
+                .post("/auth/register")
+                .send(userData);
+
+            const userRepository = AppDataSource.getRepository(User);
+            const users = await userRepository.find();
+
+            expect(response.statusCode).toBe(400);
+            expect(users).toHaveLength(0);
+        });
+
+        it("should return 400. if lastName not given", async () => {
+            // Arrange
+            const userData = {
+                firstName: "sandeep",
+                lastName: "",
+                email: "sandy@gmail.com",
+                password: "12356",
+                role: "customer",
+            };
+
+            // Act
+            const response = await request(app)
+                .post("/auth/register")
+                .send(userData);
+
+            const userRepository = AppDataSource.getRepository(User);
+            const users = await userRepository.find();
+
+            expect(response.statusCode).toBe(400);
+            expect(users).toHaveLength(0);
+        });
+
+        it("should return 400. if password not given", async () => {
+            // Arrange
+            const userData = {
+                firstName: "sandeep",
+                lastName: "Doe",
+                email: "sandy@gmail.com",
+                password: "",
+                role: "customer",
+            };
+
+            // Act
+            const response = await request(app)
+                .post("/auth/register")
+                .send(userData);
+
+            const userRepository = AppDataSource.getRepository(User);
+            const users = await userRepository.find();
+
+            expect(response.statusCode).toBe(400);
+            expect(users).toHaveLength(0);
+        });
+
+        it("should return 400. if Role not given", async () => {
+            // Arrange
+            const userData = {
+                firstName: "sandeep",
+                lastName: "Doe",
+                email: "sandy@gmail.com",
+                password: "12356",
+                role: "",
+            };
+
+            // Act
+            const response = await request(app)
+                .post("/auth/register")
+                .send(userData);
+
+            const userRepository = AppDataSource.getRepository(User);
+            const users = await userRepository.find();
+
+            expect(response.statusCode).toBe(400);
+            expect(users).toHaveLength(0);
+        });
+
+        it("should return 400. if Role is invalid", async () => {
+            // Arrange
+            const userData = {
+                firstName: "sandeep",
+                lastName: "Doe",
+                email: "sandy@gmail.com",
+                password: "12356",
+                role: "SDE", //Invalid Role
             };
 
             // Act
