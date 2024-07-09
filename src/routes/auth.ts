@@ -1,3 +1,4 @@
+import { TokenService } from "./../services/TokenService";
 import { UserService } from "./../services/UserService";
 import express, { Request, Response, NextFunction } from "express";
 import { AuthController } from "../controller/AuthController";
@@ -9,7 +10,8 @@ import validateEmail from "../validators/user-validator";
 const authRouter = express.Router();
 const repository = AppDataSource.getRepository(User);
 const userService = new UserService(repository);
-const authController = new AuthController(userService, logger);
+const tokenService = new TokenService();
+const authController = new AuthController(userService, logger, tokenService);
 
 authRouter.post(
     "/register",
