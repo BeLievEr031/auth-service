@@ -9,7 +9,7 @@
         "lint": "npx eslint .",
         "lint:fix": "npx eslint . --fix",
         "prepare": "husky",
-        "test": "jest",
+        "test": "jest --watch --runInBand",
         "start": "ts-node src/index.ts",
         "typeorm": "typeorm-ts-node-commonjs"
     },
