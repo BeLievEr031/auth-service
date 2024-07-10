@@ -1,13 +1,13 @@
 import request from "supertest";
 import app from "../../app";
-import { AppDataSource } from "../../config/data-source";
 import { User } from "../../entity/User";
 import { Role } from "../../constant";
 import { isJwt } from "../utils";
 import { RefreshToken } from "../../entity/RefreshToken";
+import { AppDataSource } from "../../config/data-source";
 import { connection } from "../jest.setup";
 
-describe.skip("POST /auth/register", () => {
+describe("POST /auth/register", () => {
     describe("with valid fields.", () => {
         it("should return 201 and a new user", async () => {
             // ARRANGE
@@ -93,6 +93,7 @@ describe.skip("POST /auth/register", () => {
             const response = await request(app)
                 .post("/auth/register")
                 .send(userData);
+
             const users = await userRepository.find();
             expect(response.statusCode).toBe(409);
             expect(users).toHaveLength(1);

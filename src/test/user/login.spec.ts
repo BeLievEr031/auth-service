@@ -1,5 +1,6 @@
 import request from "supertest";
 import app from "../../app";
+
 import { isJwt } from "../utils";
 describe("POST /auth/login", () => {
     describe("with valid fields.", () => {
