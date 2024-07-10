@@ -43,3 +43,26 @@ export default checkSchema({
         },
     },
 });
+
+const loginValidator = checkSchema({
+    email: {
+        in: ["body"],
+        isEmail: {
+            errorMessage: "Must be a valid email",
+        },
+        notEmpty: {
+            errorMessage: "Email field cannot be empty",
+        },
+
+        errorMessage: "Invalid email format",
+        normalizeEmail: true,
+    },
+    password: {
+        in: ["body"],
+        notEmpty: {
+            errorMessage: "password field cannot be empty",
+        },
+    },
+});
+
+export { loginValidator };
