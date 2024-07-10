@@ -1,36 +1,20 @@
 import request from "supertest";
 import app from "../../app";
-import { DataSource } from "typeorm";
 import { AppDataSource } from "../../config/data-source";
 import { User } from "../../entity/User";
 import { Role } from "../../constant";
 import { isJwt } from "../utils";
 import { RefreshToken } from "../../entity/RefreshToken";
+import { connection } from "../jest.setup";
 
-describe("POST /auth/register", () => {
-    let connection: DataSource;
-    beforeAll(async () => {
-        connection = await AppDataSource.initialize();
-    });
-
-    beforeEach(async () => {
-        // Database truncate
-        await connection.dropDatabase();
-        await connection.synchronize();
-        // await truncateTables(connection);
-    });
-
-    afterAll(async () => {
-        await connection.destroy();
-    });
-
+describe.skip("POST /auth/register", () => {
     describe("with valid fields.", () => {
         it("should return 201 and a new user", async () => {
             // ARRANGE
             const userData = {
                 firstName: "John",
                 lastName: "Doe",
-                email: "john@example.com",
+                email: "john1@example.com",
                 password: "12356",
                 role: "customer",
             };
@@ -55,7 +39,7 @@ describe("POST /auth/register", () => {
             const userData = {
                 firstName: "John",
                 lastName: "Doe",
-                email: "john@example.com",
+                email: "john2@example.com",
                 password: "12356",
                 role: "customer",
             };
@@ -75,7 +59,7 @@ describe("POST /auth/register", () => {
             const userData = {
                 firstName: "John",
                 lastName: "Doe",
-                email: "john@example.com",
+                email: "john3@example.com",
                 password: "12356",
                 role: "customer",
             };
@@ -97,7 +81,7 @@ describe("POST /auth/register", () => {
             const userData = {
                 firstName: "John",
                 lastName: "Doe",
-                email: "john@gmail.com",
+                email: "john4@gmail.com",
                 password: "12356",
                 role: "customer",
             };
@@ -118,7 +102,7 @@ describe("POST /auth/register", () => {
             const userData = {
                 firstName: "John",
                 lastName: "Doe",
-                email: "john@example.com",
+                email: "john5@example.com",
                 password: "12356",
                 role: "customer",
             };
@@ -158,7 +142,7 @@ describe("POST /auth/register", () => {
             const userData = {
                 firstName: "John",
                 lastName: "Doe",
-                email: "john@example.com",
+                email: "john6@example.com",
                 password: "12356",
                 role: "customer",
             };

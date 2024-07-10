@@ -30,7 +30,3 @@ export function isJwt(token: string | null): boolean {
 
     return parts.every(isBase64Url);
 }
-
-// Example usage
-const token = "your.jwt.token.here";
-console.log(isJwt(token)); // Returns true or false based on the format check
