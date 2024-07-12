@@ -138,13 +138,8 @@ export class AuthController {
 
     async self(req: IAuth, res: Response, next: NextFunction) {
         try {
-            // console.log(req.cookies);
-
-            console.log("🔍🔍🔍🔍🔍🔍🔍");
-
-            console.log("😤😤😤", req.auth);
             const user = await this.userService.userDetails(req.auth.id);
-            res.status(200).json(user);
+            res.status(200).json({ ...user, password: undefined });
         } catch (error) {
             console.log(error);
             return next(error);

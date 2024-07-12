@@ -61,5 +61,32 @@ describe("GET /auth/self", () => {
             const testID = data.body.user.id;
             expect(response.body.id).toBe(testID);
         });
+
+        it("should not return password.", async () => {
+            const userData = {
+                firstName: "John",
+                lastName: "Doe",
+                email: "john1@example.com",
+                password: "12356",
+                role: "customer",
+            };
+
+            // ACT
+            const data = await request(app)
+                .post("/auth/register")
+                .send(userData);
+
+            const accessToken = jwks.token({
+                sub: data.body.user.id,
+                role: Role.CUSTOMER,
+            });
+
+            const response = await request(app)
+                .get("/auth/self")
+                .set("Cookie", [`accessToken=${accessToken}`])
+                .send();
+
+            expect(response.body).not.toHaveProperty("password");
+        });
     });
 });
