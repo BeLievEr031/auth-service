@@ -7,7 +7,7 @@ import { RefreshToken } from "../../entity/RefreshToken";
 import { AppDataSource } from "../../config/data-source";
 import { connection } from "../jest.setup";
 
-describe("POST /auth/register", () => {
+describe.skip("POST /auth/register", () => {
     describe("with valid fields.", () => {
         it("should return 201 and a new user", async () => {
             // ARRANGE

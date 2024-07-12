@@ -21,4 +21,8 @@ export class UserService {
             throw error;
         }
     }
+
+    async userDetails(id: number) {
+        return this.userRepository.findOne({ where: { id } });
+    }
 }

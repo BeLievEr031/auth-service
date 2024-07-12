@@ -10,3 +10,10 @@ export interface IUser {
 export interface RegisterUserRequest extends Request {
     body: IUser;
 }
+
+export interface IAuth extends Request {
+    auth: {
+        id: number;
+        role: string;
+    };
+}

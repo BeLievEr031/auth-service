@@ -12,6 +12,7 @@ const {
     DB_DATABASE,
     NODE_ENV,
     REFRESH_TOKEN_SECRET,
+    JWKS_URI,
 } = process.env;
 
 const Config = {
@@ -24,6 +25,7 @@ const Config = {
     DB_DATABASE,
     NODE_ENV,
     REFRESH_TOKEN_SECRET,
+    JWKS_URI,
 } as const;
 
 export default Config;

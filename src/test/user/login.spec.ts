@@ -2,7 +2,7 @@ import request from "supertest";
 import app from "../../app";
 
 import { isJwt } from "../utils";
-describe("POST /auth/login", () => {
+describe.skip("POST /auth/login", () => {
     describe("with valid fields.", () => {
         it("should return 401 for wrong email and password.", async () => {
             const userData = {

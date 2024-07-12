@@ -1,5 +1,5 @@
 import { NextFunction, Response } from "express";
-import { RegisterUserRequest } from "../types";
+import { IAuth, RegisterUserRequest } from "../types";
 import { UserService } from "../services/UserService";
 import { Logger } from "winston";
 import { Role } from "../constant";
@@ -132,6 +132,21 @@ export class AuthController {
             });
             res.status(200).json({ user });
         } catch (error) {
+            return next(error);
+        }
+    }
+
+    async self(req: IAuth, res: Response, next: NextFunction) {
+        try {
+            // console.log(req.cookies);
+
+            console.log("🔍🔍🔍🔍🔍🔍🔍");
+
+            console.log("😤😤😤", req.auth);
+            const user = await this.userService.userDetails(req.auth.id);
+            res.status(200).json(user);
+        } catch (error) {
+            console.log(error);
             return next(error);
         }
     }
