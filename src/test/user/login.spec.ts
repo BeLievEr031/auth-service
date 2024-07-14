@@ -2,7 +2,24 @@ import request from "supertest";
 import app from "../../app";
 
 import { isJwt } from "../utils";
-describe.skip("POST /auth/login", () => {
+import { DataSource } from "typeorm";
+import { AppDataSource } from "../../config/data-source";
+describe("POST /auth/login", () => {
+    let connection: DataSource;
+
+    beforeAll(async () => {
+        connection = await AppDataSource.initialize();
+        console.log("DB Connected");
+    });
+
+    beforeEach(async () => {
+        await connection.dropDatabase();
+        await connection.synchronize();
+    });
+
+    afterAll(async () => {
+        await connection.destroy();
+    });
     describe("with valid fields.", () => {
         it("should return 401 for wrong email and password.", async () => {
             const userData = {

@@ -5,9 +5,24 @@ import { Role } from "../../constant";
 import { isJwt } from "../utils";
 import { RefreshToken } from "../../entity/RefreshToken";
 import { AppDataSource } from "../../config/data-source";
-import { connection } from "../jest.setup";
+import { DataSource } from "typeorm";
 
-describe.skip("POST /auth/register", () => {
+describe("POST /auth/register", () => {
+    let connection: DataSource;
+
+    beforeAll(async () => {
+        connection = await AppDataSource.initialize();
+        console.log("DB Connected");
+    });
+
+    beforeEach(async () => {
+        await connection.dropDatabase();
+        await connection.synchronize();
+    });
+
+    afterAll(async () => {
+        await connection.destroy();
+    });
     describe("with valid fields.", () => {
         it("should return 201 and a new user", async () => {
             // ARRANGE
