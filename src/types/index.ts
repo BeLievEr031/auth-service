@@ -13,7 +13,7 @@ export interface RegisterUserRequest extends Request {
 
 export interface IAuth extends Request {
     auth: {
-        id: number;
+        sub: number;
         role: string;
     };
 }

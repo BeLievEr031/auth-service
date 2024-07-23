@@ -88,5 +88,10 @@ describe("GET /auth/self", () => {
 
             expect(response.body).not.toHaveProperty("password");
         });
+
+        it("should return the 401 status code if no token is given", async () => {
+            const response = await request(app).get("/auth/self").send();
+            expect(response.statusCode).toBe(401);
+        });
     });
 });

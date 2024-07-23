@@ -19,21 +19,18 @@ app.use("/auth", authRouter);
 // error handling middleware
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 app.use((err: HttpError, _req: Request, res: Response, next: NextFunction) => {
-    if (err instanceof Error) {
-        const statusCode = err.statusCode || 500;
-
-        res.status(statusCode).json({
-            errors: [
-                {
-                    type: err.name,
-                    message: err.message,
-                    path: "",
-                    location: "",
-                    err,
-                    stack: process.env.NODE_ENV === "dev" && err.stack,
-                },
-            ],
-        });
-    }
+    const statusCode = err.status || err.statusCode || 500;
+    res.status(statusCode).json({
+        errors: [
+            {
+                type: err.name,
+                message: err.inner?.message || err.message,
+                path: "",
+                location: "",
+                err,
+                stack: process.env.NODE_ENV === "dev" && err.stack,
+            },
+        ],
+    });
 });
 export default app;
