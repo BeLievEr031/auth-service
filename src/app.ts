@@ -11,6 +11,7 @@ app.get("/", (req: Request, res: Response) => {
     res.json({ msg: "hi from jbj me" });
 });
 
+app.use(express.static("public"));
 app.use(cookieParser());
 
 app.use("/auth", authRouter);
