@@ -14,7 +14,7 @@ export class TokenService {
 
         try {
             privateKey = fs.readFileSync(
-                path.join(__dirname, "../../certs/private_key.pem")
+                path.join(__dirname, "../../certs/private.pem")
             );
             const accessToken = sign(payload, privateKey, {
                 algorithm: "RS256",
