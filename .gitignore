@@ -197,3 +197,7 @@ $RECYCLE.BIN/
 .idea/
 .vscode/
 node_modules/
+.well-known/
+jwks.json
+public/
+public/.well-known/jwks.json
