@@ -145,4 +145,47 @@ export class AuthController {
             return next(error);
         }
     }
+
+    async refresh(req: IAuth, res: Response, next: NextFunction) {
+        try {
+            const payload: JwtPayload = {
+                sub: String(req.auth.sub),
+                role: req.auth.role,
+            };
+
+            const accessToken = this.tokenService.generateAccessToken(payload);
+            const user = await this.userService.findById(Number(req.auth.sub));
+            if (!user) {
+                const err = createHttpError(401, "Invalid token.");
+                return next(err);
+            }
+
+            await this.tokenService.deleteRefreshToken(Number(req.auth.id));
+            const newRefreshToken =
+                await this.tokenService.persistRefreshToken(user);
+
+            const refreshToken = this.tokenService.generateRefreshToken({
+                ...payload,
+                id: newRefreshToken.id,
+            });
+
+            res.cookie("accessToken", accessToken, {
+                domain: "localhost",
+                sameSite: "strict",
+                maxAge: 1000 * 60 * 60,
+                httpOnly: true,
+            });
+
+            res.cookie("refreshToken", refreshToken, {
+                domain: "localhost",
+                sameSite: "strict",
+                maxAge: 1000 * 60 * 60 * 24 * 365,
+                httpOnly: true,
+            });
+
+            res.status(200).json({ msg: "Token Refreshed!" });
+        } catch (error) {
+            return next(error);
+        }
+    }
 }

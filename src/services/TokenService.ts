@@ -8,7 +8,7 @@ import { Repository } from "typeorm";
 import { IUser } from "../types";
 
 export class TokenService {
-    constructor(private repository: Repository<RefreshToken>) {}
+    constructor(private refreshTokenRepo: Repository<RefreshToken>) {}
     generateAccessToken(payload: JwtPayload) {
         let privateKey: Buffer;
 
@@ -43,11 +43,15 @@ export class TokenService {
 
     async persistRefreshToken(user: IUser) {
         const MS_IN_YEAR = 1000 * 60 * 60 * 24 * 365;
-        const RefreshToken = await this.repository.save({
+        const RefreshToken = await this.refreshTokenRepo.save({
             user: user,
             expireAt: new Date(Date.now() + MS_IN_YEAR),
         });
 
         return RefreshToken;
+    }
+
+    async deleteRefreshToken(tokenId: number) {
+        await this.refreshTokenRepo.delete({ id: tokenId });
     }
 }

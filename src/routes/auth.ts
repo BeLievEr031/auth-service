@@ -17,6 +17,7 @@ import validateEmail, {
 import { RefreshToken } from "../entity/RefreshToken";
 import authenticate from "../middleware/authenticate";
 import { IAuth } from "../types";
+import refreshToken from "../middleware/refreshToken";
 
 const authRouter = express.Router();
 const userRepository = AppDataSource.getRepository(User);
@@ -50,6 +51,13 @@ authRouter.get(
     authenticate as RequestHandler,
     (req: Request, res: Response, next: NextFunction) =>
         authController.self(req as IAuth, res, next)
+);
+
+authRouter.post(
+    "/refresh",
+    refreshToken as RequestHandler,
+    (req: Request, res: Response, next: NextFunction) =>
+        authController.refresh(req as IAuth, res, next)
 );
 
 export default authRouter;
