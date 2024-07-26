@@ -11,7 +11,7 @@ export interface RegisterUserRequest extends Request {
     body: IUser;
 }
 
-export interface IAuth extends Request {
+export interface AuthRequest extends Request {
     auth: {
         sub: number;
         role: string;

@@ -1,5 +1,5 @@
 import { NextFunction, Response } from "express";
-import { IAuth, RegisterUserRequest } from "../types";
+import { AuthRequest, RegisterUserRequest } from "../types";
 import { UserService } from "../services/UserService";
 import { Logger } from "winston";
 import { Role } from "../constant";
@@ -136,7 +136,7 @@ export class AuthController {
         }
     }
 
-    async self(req: IAuth, res: Response, next: NextFunction) {
+    async self(req: AuthRequest, res: Response, next: NextFunction) {
         try {
             const userID = req.auth.sub;
             const user = await this.userService.userDetails(userID);
@@ -146,7 +146,7 @@ export class AuthController {
         }
     }
 
-    async refresh(req: IAuth, res: Response, next: NextFunction) {
+    async refresh(req: AuthRequest, res: Response, next: NextFunction) {
         try {
             const payload: JwtPayload = {
                 sub: String(req.auth.sub),
@@ -184,6 +184,19 @@ export class AuthController {
             });
 
             res.status(200).json({ msg: "Token Refreshed!" });
+        } catch (error) {
+            return next(error);
+        }
+    }
+
+    async logout(req: AuthRequest, res: Response, next: NextFunction) {
+        try {
+            await this.tokenService.deleteRefreshToken(Number(req.auth.id));
+            this.logger.info("Refresh Token deleted.", { id: req.auth.id });
+            this.logger.info("User has been logged out.", { id: req.auth.sub });
+            res.clearCookie("accessToken");
+            res.clearCookie("rfreshToken");
+            res.status(200).json({ msg: "User logged out." });
         } catch (error) {
             return next(error);
         }

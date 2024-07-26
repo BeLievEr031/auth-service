@@ -16,8 +16,9 @@ import validateEmail, {
 } from "../validators/user-validator";
 import { RefreshToken } from "../entity/RefreshToken";
 import authenticate from "../middleware/authenticate";
-import { IAuth } from "../types";
+import { AuthRequest } from "../types";
 import refreshToken from "../middleware/refreshToken";
+import parseRefreshToken from "../middleware/parseRefreshToken";
 
 const authRouter = express.Router();
 const userRepository = AppDataSource.getRepository(User);
@@ -50,14 +51,22 @@ authRouter.get(
     "/self",
     authenticate as RequestHandler,
     (req: Request, res: Response, next: NextFunction) =>
-        authController.self(req as IAuth, res, next)
+        authController.self(req as AuthRequest, res, next)
 );
 
 authRouter.post(
     "/refresh",
     refreshToken as RequestHandler,
     (req: Request, res: Response, next: NextFunction) =>
-        authController.refresh(req as IAuth, res, next)
+        authController.refresh(req as AuthRequest, res, next)
+);
+
+authRouter.delete(
+    "/logout",
+    authenticate as RequestHandler,
+    parseRefreshToken as RequestHandler,
+    (req: Request, res: Response, next: NextFunction) =>
+        authController.logout(req as AuthRequest, res, next)
 );
 
 export default authRouter;
