@@ -27,3 +27,12 @@ export interface AuthToken {
 export interface IRefreshTokenPayload {
     id: string;
 }
+
+export interface ITenant {
+    name: string;
+    address: string;
+}
+
+export interface TenantRequest {
+    body: ITenant;
+}

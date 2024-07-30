@@ -1,6 +1,7 @@
 import "reflect-metadata";
 import express, { Response, Request, NextFunction } from "express";
 import authRouter from "./routes/auth";
+import tenantRouter from "./routes/tenant";
 import { HttpError } from "http-errors";
 import cookieParser from "cookie-parser";
 // import logger from "./config/logger";
@@ -15,6 +16,7 @@ app.use(express.static("public"));
 app.use(cookieParser());
 
 app.use("/auth", authRouter);
+app.use("/tenant", tenantRouter);
 
 // error handling middleware
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
