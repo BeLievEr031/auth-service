@@ -9,7 +9,7 @@ class TenantController {
 
         try {
             const tenant = await this.tenantService.create({ name, address });
-            res.status(201).json({ id: tenant.id });
+            res.status(201).json(tenant);
         } catch (error) {
             return next(error);
         }
