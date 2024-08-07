@@ -1,2 +1,6 @@
-dist
-*.json
+dist/
+node_modules
+*.spec.ts
+tests/
+.github
+*.js
