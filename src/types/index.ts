@@ -1,25 +1,25 @@
 import { Request } from "express";
-export interface IUser {
+
+export interface UserData {
     firstName: string;
     lastName: string;
     email: string;
     password: string;
     role: string;
 }
-
 export interface RegisterUserRequest extends Request {
-    body: IUser;
+    body: UserData;
 }
 
 export interface AuthRequest extends Request {
     auth: {
-        sub: number;
+        sub: string;
         role: string;
-        id?: number;
+        id?: string;
     };
 }
 
-export interface AuthToken {
+export interface AuthCookie {
     accessToken: string;
     refreshToken: string;
 }
@@ -33,6 +33,20 @@ export interface ITenant {
     address: string;
 }
 
-export interface TenantRequest {
+export interface CreateTenantRequest extends Request {
     body: ITenant;
+}
+
+export interface CreateUserRequest extends Request {
+    body: UserData;
+}
+
+export interface LimitedUserData {
+    firstName: string;
+    lastName: string;
+    role: string;
+}
+
+export interface UpdateUserRequest extends Request {
+    body: LimitedUserData;
 }

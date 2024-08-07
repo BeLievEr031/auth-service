@@ -1,30 +1,24 @@
-import { CredentialService } from "./../services/CredentialService";
-import { TokenService } from "./../services/TokenService";
-import { UserService } from "./../services/UserService";
-import express, {
-    Request,
-    Response,
-    NextFunction,
-    RequestHandler,
-} from "express";
-import { AuthController } from "../controller/AuthController";
+import express, { NextFunction, Request, Response } from "express";
+import { UserService } from "../services/UserService";
 import { AppDataSource } from "../config/data-source";
 import { User } from "../entity/User";
 import logger from "../config/logger";
-import validateEmail, {
-    loginValidator as validateLogin,
-} from "../validators/user-validator";
+import registerValidator from "../validators/register-validator";
+import { TokenService } from "../services/TokenService";
 import { RefreshToken } from "../entity/RefreshToken";
-import authenticate from "../middleware/authenticate";
+import loginValidator from "../validators/login-validator";
+import authenticate from "../middlewares/authenticate";
 import { AuthRequest } from "../types";
-import refreshToken from "../middleware/refreshToken";
-import parseRefreshToken from "../middleware/parseRefreshToken";
+import parseRefreshToken from "../middlewares/parseRefreshToken";
+import { AuthController } from "../controller/AuthController";
+import validateRefreshToken from "../middlewares/validateRefreshToken";
+import { CredentialService } from "../services/CredentialService";
 
-const authRouter = express.Router();
+const router = express.Router();
 const userRepository = AppDataSource.getRepository(User);
-const refreshTokenRepo = AppDataSource.getRepository(RefreshToken);
 const userService = new UserService(userRepository);
-const tokenService = new TokenService(refreshTokenRepo);
+const refreshTokenRepository = AppDataSource.getRepository(RefreshToken);
+const tokenService = new TokenService(refreshTokenRepository);
 const credentialService = new CredentialService(userRepository);
 const authController = new AuthController(
     userService,
@@ -33,40 +27,37 @@ const authController = new AuthController(
     credentialService
 );
 
-authRouter.post(
+router.post(
     "/register",
-    validateEmail,
+    registerValidator,
     (req: Request, res: Response, next: NextFunction) =>
         authController.register(req, res, next)
 );
 
-authRouter.post(
+router.post(
     "/login",
-    validateLogin,
+    loginValidator,
     (req: Request, res: Response, next: NextFunction) =>
         authController.login(req, res, next)
 );
 
-authRouter.get(
-    "/self",
-    authenticate as RequestHandler,
-    (req: Request, res: Response, next: NextFunction) =>
-        authController.self(req as AuthRequest, res, next)
+router.get("/self", authenticate, (req: Request, res: Response) =>
+    authController.self(req as AuthRequest, res)
 );
 
-authRouter.post(
+router.post(
     "/refresh",
-    refreshToken as RequestHandler,
+    validateRefreshToken,
     (req: Request, res: Response, next: NextFunction) =>
         authController.refresh(req as AuthRequest, res, next)
 );
 
-authRouter.delete(
+router.post(
     "/logout",
-    authenticate as RequestHandler,
-    parseRefreshToken as RequestHandler,
+    authenticate,
+    parseRefreshToken,
     (req: Request, res: Response, next: NextFunction) =>
         authController.logout(req as AuthRequest, res, next)
 );
 
-export default authRouter;
+export default router;

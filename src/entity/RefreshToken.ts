@@ -14,10 +14,11 @@ export class RefreshToken {
     id: number;
 
     @Column({ type: "timestamp" })
-    expireAt: Date;
+    expiresAt: Date;
 
     @ManyToOne(() => User)
     user: User;
+    // userId
 
     @UpdateDateColumn()
     updatedAt: number;

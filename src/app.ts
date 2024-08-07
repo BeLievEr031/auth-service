@@ -1,38 +1,40 @@
 import "reflect-metadata";
-import express, { Response, Request, NextFunction } from "express";
+
+import express, { NextFunction, Request, Response } from "express";
+import cookieParser from "cookie-parser";
+import logger from "./config/logger";
+import { HttpError } from "http-errors";
 import authRouter from "./routes/auth";
 import tenantRouter from "./routes/tenant";
-import { HttpError } from "http-errors";
-import cookieParser from "cookie-parser";
-// import logger from "./config/logger";
+import userRouter from "./routes/user";
+
 const app = express();
-app.use(express.json({ limit: "15KB" }));
-
-app.get("/", (req: Request, res: Response) => {
-    res.json({ msg: "hi from jbj me" });
-});
-
 app.use(express.static("public"));
 app.use(cookieParser());
+app.use(express.json());
+
+app.get("/", async (req, res) => {
+    res.send("Welcome to Auth service");
+});
 
 app.use("/auth", authRouter);
-app.use("/tenant", tenantRouter);
+app.use("/tenants", tenantRouter);
+app.use("/users", userRouter);
 
-// error handling middleware
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-app.use((err: HttpError, _req: Request, res: Response, next: NextFunction) => {
-    const statusCode = err.status || err.statusCode || 500;
+app.use((err: HttpError, req: Request, res: Response, next: NextFunction) => {
+    logger.error(err.message);
+    const statusCode = err.statusCode || err.status || 500;
     res.status(statusCode).json({
         errors: [
             {
                 type: err.name,
-                message: err.inner?.message || err.message,
+                msg: err.message,
                 path: "",
                 location: "",
-                err,
-                stack: process.env.NODE_ENV === "dev" && err.stack,
             },
         ],
     });
 });
+
 export default app;

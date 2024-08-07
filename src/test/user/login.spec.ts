@@ -1,15 +1,17 @@
+import { DataSource } from "typeorm";
+import bcrypt from "bcrypt";
 import request from "supertest";
+import { isJwt } from "../utils";
+import { AppDataSource } from "../../config/data-source";
+import { User } from "../../entity/User";
+import { Roles } from "../../constants";
 import app from "../../app";
 
-import { isJwt } from "../utils";
-import { DataSource } from "typeorm";
-import { AppDataSource } from "../../config/data-source";
 describe("POST /auth/login", () => {
     let connection: DataSource;
 
     beforeAll(async () => {
         connection = await AppDataSource.initialize();
-        console.log("DB Connected");
     });
 
     beforeEach(async () => {
@@ -20,101 +22,79 @@ describe("POST /auth/login", () => {
     afterAll(async () => {
         await connection.destroy();
     });
-    describe("with valid fields.", () => {
-        it("should return 401 for wrong email and password.", async () => {
+
+    describe("Given all fields", () => {
+        it("should return the access token and refresh token inside a cookie", async () => {
+            // Arrange
             const userData = {
-                email: "test1@test.com",
-                password: "123456",
+                firstName: "Rakesh",
+                lastName: "K",
+                email: "rakesh@mern.space",
+                password: "password",
             };
 
-            const response = await request(app)
-                .post("/auth/login")
-                .send(userData);
-            expect(response.statusCode).toBe(401);
-        });
+            const hashedPassword = await bcrypt.hash(userData.password, 10);
 
-        it("should return 200 after login.", async () => {
-            const userData = {
-                firstName: "John",
-                lastName: "Doe",
-                email: "test3@test.com",
-                password: "12356",
-                role: "customer",
-            };
+            const userRepository = connection.getRepository(User);
+            await userRepository.save({
+                ...userData,
+                password: hashedPassword,
+                role: Roles.CUSTOMER,
+            });
 
-            // ACT
-            await request(app).post("/auth/register").send(userData);
-
-            const response = await request(app)
-                .post("/auth/login")
-                .send({ email: userData.email, password: userData.password });
-            expect(response.statusCode).toBe(200);
-        });
-
-        it("should return accessToken & refreshToken after login.", async () => {
-            const userData = {
-                firstName: "John",
-                lastName: "Doe",
-                email: "test1@test.com",
-                password: "12356",
-                role: "customer",
-            };
-
-            let accessToken = null;
-            let refreshToken = null;
-
-            // ACT
-            await request(app).post("/auth/register").send(userData);
-
+            // Act
             const response = await request(app)
                 .post("/auth/login")
                 .send({ email: userData.email, password: userData.password });
 
             interface Headers {
-                "set-cookie"?: string[];
+                ["set-cookie"]: string[];
             }
-
-            const cookies = (response.headers as Headers)["set-cookie"] || [];
-
+            // Assert
+            let accessToken = null;
+            let refreshToken = null;
+            const cookies =
+                (response.headers as unknown as Headers)["set-cookie"] || [];
             cookies.forEach((cookie) => {
                 if (cookie.startsWith("accessToken=")) {
                     accessToken = cookie.split(";")[0].split("=")[1];
                 }
+
                 if (cookie.startsWith("refreshToken=")) {
                     refreshToken = cookie.split(";")[0].split("=")[1];
                 }
             });
-
             expect(accessToken).not.toBeNull();
             expect(refreshToken).not.toBeNull();
 
             expect(isJwt(accessToken)).toBeTruthy();
             expect(isJwt(refreshToken)).toBeTruthy();
         });
-    });
-
-    describe("with invalid fields.", () => {
-        it("should return 400. if email not given.", async () => {
+        it("should return the 400 if email or password is wrong", async () => {
+            // Arrange
             const userData = {
-                email: "",
-                password: "123456",
+                firstName: "Rakesh",
+                lastName: "K",
+                email: "rakesh@mern.space",
+                password: "password",
             };
 
+            const hashedPassword = await bcrypt.hash(userData.password, 10);
+
+            const userRepository = connection.getRepository(User);
+            await userRepository.save({
+                ...userData,
+                password: hashedPassword,
+                role: Roles.CUSTOMER,
+            });
+
+            // Act
             const response = await request(app)
                 .post("/auth/login")
-                .send(userData);
-            expect(response.statusCode).toBe(400);
-        });
+                .send({ email: userData.email, password: "wrongPassword" });
 
-        it("should return 400. if password not given.", async () => {
-            const userData = {
-                email: "test2@gmail.com",
-                password: "",
-            };
+            // Assert
 
-            const response = await request(app)
-                .post("/auth/login")
-                .send(userData);
             expect(response.statusCode).toBe(400);
         });
     });

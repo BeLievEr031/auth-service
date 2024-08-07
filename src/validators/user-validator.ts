@@ -1,5 +1,5 @@
 import { checkSchema } from "express-validator";
-import { Role } from "../constant";
+import { Roles } from "../constants";
 
 export default checkSchema({
     email: {
@@ -38,7 +38,7 @@ export default checkSchema({
             errorMessage: "Role field cannot be empty",
         },
         isIn: {
-            options: [Object.values(Role)],
+            options: [Object.values(Roles)],
             errorMessage: "Invalid role",
         },
     },

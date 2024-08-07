@@ -1,20 +1,19 @@
-import { Request } from "express";
 import { expressjwt } from "express-jwt";
-import Config from "../config";
-import { AuthToken, IRefreshTokenPayload } from "../types";
-import logger from "../config/logger";
+import { Request } from "express";
+import { AuthCookie, IRefreshTokenPayload } from "../types";
 import { AppDataSource } from "../config/data-source";
 import { RefreshToken } from "../entity/RefreshToken";
-// import
+import logger from "../config/logger";
+import Config from "../config";
 
 export default expressjwt({
     secret: Config.REFRESH_TOKEN_SECRET as string,
     algorithms: ["HS256"],
     getToken(req: Request) {
-        const { refreshToken } = req.cookies as AuthToken;
+        const { refreshToken } = req.cookies as AuthCookie;
         return refreshToken;
     },
-    async isRevoked(req: Request, token) {
+    async isRevoked(request: Request, token) {
         try {
             const refreshTokenRepo = AppDataSource.getRepository(RefreshToken);
             const refreshToken = await refreshTokenRepo.findOne({
@@ -23,13 +22,12 @@ export default expressjwt({
                     user: { id: Number(token?.payload.sub) },
                 },
             });
-
             return refreshToken === null;
-        } catch (error) {
-            logger.error("Error while getting refresh Token", {
+        } catch (err) {
+            logger.error("Error while getting the refresh token", {
                 id: (token?.payload as IRefreshTokenPayload).id,
             });
-            throw error;
         }
+        return true;
     },
 });
