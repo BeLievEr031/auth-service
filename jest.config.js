@@ -6,6 +6,5 @@ module.exports = {
     verbose: true,
     collectCoverage: true,
     coverageProvider: "v8",
-    collectCoverageFrom: ["src/**/*.ts", "!src/test/**", "!**/node_modules/**"]
-
+    collectCoverageFrom: ["src/**/*.ts", "!src/test/**", "!**/node_modules/**"],
 };
